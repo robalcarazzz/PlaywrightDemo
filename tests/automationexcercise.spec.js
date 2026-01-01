@@ -24,7 +24,28 @@ test.describe('Registration - Login flow', () => {
     await navigation.signUpLogin();
     await loginPage.verifyLoginFormIsVisible();
     await loginPage.verifySignupFormIsVisible();
-    await loginPage.signup();
+    const generatedName = await loginPage.signup();
+    await loginPage.fillAccountInformationForm({
+      title: 'Mr',
+      day: '10',
+      month: '5',     // May
+      year: '1985',
+      firstName: 'John',
+      lastName: 'Smith',
+      company: 'QA Testing Ltd',
+      address: '456 Elm Street',
+      country: 'Canada',
+      state: 'Ontario',
+      city: 'Toronto',
+      zipcode: 'M5V 2T6',
+      mobile: '4165550198'
+    });
+    await loginPage.createAccount();
+    await loginPage.continue();
+    await loginPage.verifyLoggedInAs(generatedName);
+    await navigation.deleteAccount();
+    await loginPage.verifyAccountDeleted();
+    await loginPage.continue();
   });
 });
 

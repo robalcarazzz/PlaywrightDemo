@@ -17,6 +17,12 @@ class Navigation {
     await this.page.click('a[href="/login"]');
   }
 
+  async deleteAccount() {
+    await this.page.click('a[href="/delete_account"]');
+  }
+
+
+
 }
 
 export { Navigation };
