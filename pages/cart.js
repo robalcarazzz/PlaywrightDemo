@@ -24,11 +24,11 @@ class CartPage {
   }
 
   async clearCart() {
-    while (await this.page.locator('tbody tr').count() > 0) {
+    while ((await this.page.locator('tbody tr').count()) > 0) {
       await this.page.locator('a.cart_quantity_delete').first().click();
       await this.page.waitForTimeout(500);
     }
-    
+
     await expect(this.page.locator('text=Cart is empty!')).toBeVisible({ timeout: 10000 });
   }
 }

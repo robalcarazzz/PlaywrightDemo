@@ -81,7 +81,6 @@ class LoginPage {
     const deletedMessage = this.page.locator('[data-qa="account-deleted"]');
     await expect(deletedMessage).toBeVisible({ timeout: 10000 });
   }
-  
 }
 
 export { LoginPage };

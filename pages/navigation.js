@@ -20,9 +20,6 @@ class Navigation {
   async deleteAccount() {
     await this.page.click('a[href="/delete_account"]');
   }
-
-
-
 }
 
 export { Navigation };

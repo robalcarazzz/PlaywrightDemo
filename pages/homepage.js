@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test'; 
+import { expect } from '@playwright/test';
 
 class HomePage {
   constructor(page) {
@@ -8,7 +8,6 @@ class HomePage {
   async isVisible() {
     await expect(this.page.locator('#slider')).toBeVisible();
   }
-
 }
 
 export { HomePage };

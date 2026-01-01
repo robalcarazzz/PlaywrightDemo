@@ -28,7 +28,7 @@ test.describe('Registration - Login flow', () => {
     await loginPage.fillAccountInformationForm({
       title: 'Mr',
       day: '10',
-      month: '5',     // May
+      month: '5', // May
       year: '1985',
       firstName: 'John',
       lastName: 'Smith',
@@ -38,7 +38,7 @@ test.describe('Registration - Login flow', () => {
       state: 'Ontario',
       city: 'Toronto',
       zipcode: 'M5V 2T6',
-      mobile: '4165550198'
+      mobile: '4165550198',
     });
     await loginPage.createAccount();
     await loginPage.continue();
@@ -72,13 +72,13 @@ test.describe('Cart Testing', () => {
       description: 'Blue Top',
       price: 'Rs. 500',
       quantity: '1',
-      total: 'Rs. 500'
+      total: 'Rs. 500',
     });
     await cartPage.verifyProductInCart(2, {
       description: 'Men Tshirt',
       price: 'Rs. 400',
       quantity: '1',
-      total: 'Rs. 400'
+      total: 'Rs. 400',
     });
     await cartPage.clearCart();
   });
@@ -98,9 +98,8 @@ test.describe('Cart Testing', () => {
       description: 'Blue Top',
       price: 'Rs. 500',
       quantity: '2',
-      total: 'Rs. 1000'
+      total: 'Rs. 1000',
     });
     await cartPage.clearCart();
   });
-
 });

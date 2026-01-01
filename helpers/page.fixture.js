@@ -11,7 +11,7 @@ function createPageObjects(page) {
     productsPage: new Products(page),
     navigation: new Navigation(page),
     cartPage: new CartPage(page),
-    loginPage: new LoginPage(page)
+    loginPage: new LoginPage(page),
   };
 }
 export const test = base.extend({
@@ -34,7 +34,7 @@ export const test = base.extend({
   loginPage: async ({ page }, use) => {
     const pageObjects = createPageObjects(page);
     await use(pageObjects.loginPage);
-}
+  },
 });
 
 export { test };
