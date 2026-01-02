@@ -20,6 +20,10 @@ class Navigation {
   async deleteAccount() {
     await this.page.click('a[href="/delete_account"]');
   }
+
+  async isOnLoginPage() {
+    await expect(this.page).toHaveURL(/\/login$/);
+  }
 }
 
 export { Navigation };

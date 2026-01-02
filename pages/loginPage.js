@@ -81,6 +81,26 @@ class LoginPage {
     const deletedMessage = this.page.locator('[data-qa="account-deleted"]');
     await expect(deletedMessage).toBeVisible({ timeout: 10000 });
   }
+
+  //for login with invalid credentials
+  async login(email, password) {
+    await this.verifyLoginFormIsVisible();
+
+    await this.page.fill('[data-qa="login-email"]', email);
+    await this.page.fill('[data-qa="login-password"]', password);
+    await this.page.click('[data-qa="login-button"]');
+  }
+
+  async verifyInvalidLoginError() {
+    const errorMessage = this.page.locator(
+      'p[style*="color: red"]:has-text("Your email or password is incorrect!")'
+    );
+    await expect(errorMessage).toBeVisible({ timeout: 10000 });
+  }
+
+  async logout() {
+    await this.page.locator('a[href="/logout"]').click();
+  }
 }
 
 export { LoginPage };

@@ -31,6 +31,64 @@ class CartPage {
 
     await expect(this.page.locator('text=Cart is empty!')).toBeVisible({ timeout: 10000 });
   }
+
+  async proceedToCheckout() {
+    await this.page.click('text=Proceed To Checkout');
+  }
+
+  async verifyDeliveryAddress({ fullName, addressLines = [], cityStateZip, country, phone }) {
+    const deliverySection = this.page.locator('#address_delivery');
+
+    await expect(deliverySection).toBeVisible();
+
+    await expect(deliverySection.locator('.address_firstname.address_lastname')).toHaveText(
+      fullName
+    );
+
+    if (addressLines.length > 0) {
+      const lineLocators = deliverySection.locator('.address_address1.address_address2');
+      for (let i = 0; i < addressLines.length; i++) {
+        await expect(lineLocators.nth(i)).toHaveText(addressLines[i]);
+      }
+    }
+
+    await expect(
+      deliverySection.locator('.address_city.address_state_name.address_postcode')
+    ).toHaveText(cityStateZip);
+
+    await expect(deliverySection.locator('.address_country_name')).toHaveText(country);
+
+    await expect(deliverySection.locator('.address_phone')).toHaveText(phone);
+  }
+
+  async verifyBillingAddress({ fullName, addressLines = [], cityStateZip, country, phone }) {
+    const billingSection = this.page.locator('#address_invoice');
+
+    await expect(billingSection).toBeVisible();
+
+    await expect(billingSection.locator('.address_firstname.address_lastname')).toHaveText(
+      fullName
+    );
+
+    if (addressLines.length > 0) {
+      const lineLocators = billingSection.locator('.address_address1.address_address2');
+      for (let i = 0; i < addressLines.length; i++) {
+        await expect(lineLocators.nth(i)).toHaveText(addressLines[i]);
+      }
+    }
+
+    await expect(
+      billingSection.locator('.address_city.address_state_name.address_postcode')
+    ).toHaveText(cityStateZip);
+
+    await expect(billingSection.locator('.address_country_name')).toHaveText(country);
+
+    await expect(billingSection.locator('.address_phone')).toHaveText(phone);
+  }
+
+  async placeOrder() {
+    await this.page.click('text=Place Order');
+  }
 }
 
 export { CartPage };

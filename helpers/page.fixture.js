@@ -4,6 +4,7 @@ import { Products } from '../pages/productspage.js';
 import { Navigation } from '../pages/navigation.js';
 import { CartPage } from '../pages/cart.js';
 import { LoginPage } from '../pages/loginPage.js';
+import { Payment } from '../pages/payment.js';
 
 function createPageObjects(page) {
   return {
@@ -12,6 +13,7 @@ function createPageObjects(page) {
     navigation: new Navigation(page),
     cartPage: new CartPage(page),
     loginPage: new LoginPage(page),
+    payment: new Payment(page),
   };
 }
 export const test = base.extend({
@@ -34,6 +36,10 @@ export const test = base.extend({
   loginPage: async ({ page }, use) => {
     const pageObjects = createPageObjects(page);
     await use(pageObjects.loginPage);
+  },
+  payment: async ({ page }, use) => {
+    const pageObjects = createPageObjects(page);
+    await use(pageObjects.payment);
   },
 });
 
