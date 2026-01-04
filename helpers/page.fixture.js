@@ -6,41 +6,26 @@ import { CartPage } from '../pages/cart.js';
 import { LoginPage } from '../pages/loginPage.js';
 import { Payment } from '../pages/payment.js';
 
-function createPageObjects(page) {
-  return {
-    homePage: new HomePage(page),
-    productsPage: new Products(page),
-    navigation: new Navigation(page),
-    cartPage: new CartPage(page),
-    loginPage: new LoginPage(page),
-    payment: new Payment(page),
-  };
-}
+const pageClasses = {
+  homePage: HomePage,
+  productsPage: Products,
+  navigation: Navigation,
+  cartPage: CartPage,
+  loginPage: LoginPage,
+  payment: Payment,
+};
+
 export const test = base.extend({
-  homePage: async ({ page }, use) => {
-    const pageObjects = createPageObjects(page);
-    await use(pageObjects.homePage);
-  },
-  productsPage: async ({ page }, use) => {
-    const pageObjects = createPageObjects(page);
-    await use(pageObjects.productsPage);
-  },
-  navigation: async ({ page }, use) => {
-    const pageObjects = createPageObjects(page);
-    await use(pageObjects.navigation);
-  },
-  cartPage: async ({ page }, use) => {
-    const pageObjects = createPageObjects(page);
-    await use(pageObjects.cartPage);
-  },
-  loginPage: async ({ page }, use) => {
-    const pageObjects = createPageObjects(page);
-    await use(pageObjects.loginPage);
-  },
-  payment: async ({ page }, use) => {
-    const pageObjects = createPageObjects(page);
-    await use(pageObjects.payment);
+  pageObjects: async ({ page }, use) => {
+    const pageObjects = Object.fromEntries(
+      Object.entries(pageClasses).map(([key, PageClass]) => [key, new PageClass(page)])
+    );
+    await use(pageObjects);
   },
 });
 
-export { test };
+Object.entries(pageClasses).forEach(([name, _]) => {
+  test[name] = async ({ pageObjects }, use) => await use(pageObjects[name]);
+});
+
+export { expect } from '@playwright/test';

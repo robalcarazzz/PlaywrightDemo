@@ -1,4 +1,4 @@
-import { test, expect } from '../helpers/auth.fixture.js';
+import { test } from '../helpers/auth.fixture.js';
 import { Navigation } from '../pages/navigation.js';
 import { HomePage } from '../pages/homepage.js';
 import { ProductsPage } from '../pages/productspage.js';
@@ -9,31 +9,34 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: './.env' });
 
-let navigation;
-let homePage;
-let productsPage;
-let cartPage;
-let loginPage;
-let payment;
+const createPageObjects = pageInstance => ({
+  navigation: new Navigation(pageInstance),
+  homePage: new HomePage(pageInstance),
+  productsPage: new ProductsPage(pageInstance),
+  cartPage: new CartPage(pageInstance),
+  loginPage: new LoginPage(pageInstance),
+  payment: new Payment(pageInstance),
+});
 
 test.describe('Registration - Login flow', () => {
   test.beforeEach(async ({ page }) => {
-    navigation = new Navigation(page);
-    homePage = new HomePage(page);
-    loginPage = new LoginPage(page);
+    const pages = createPageObjects(page);
+    Object.assign(globalThis, pages);
+
     await page.goto('https://automationexercise.com/');
   });
 
-  test('Register User', async ({ page }) => {
+  test('Register User', async () => {
     await homePage.isVisible();
     await navigation.signUpLogin();
     await loginPage.verifyLoginFormIsVisible();
     await loginPage.verifySignupFormIsVisible();
+
     const generatedName = await loginPage.signup();
     await loginPage.fillAccountInformationForm({
       title: 'Mr',
       day: '10',
-      month: '5', // May
+      month: '5',
       year: '1985',
       firstName: 'John',
       lastName: 'Smith',
@@ -45,6 +48,7 @@ test.describe('Registration - Login flow', () => {
       zipcode: 'M5V 2T6',
       mobile: '4165550198',
     });
+
     await loginPage.createAccount();
     await loginPage.continue();
     await loginPage.verifyLoggedInAs(generatedName);
@@ -53,7 +57,7 @@ test.describe('Registration - Login flow', () => {
     await loginPage.continue();
   });
 
-  test('Login User with incorrect email and password', async ({ page }) => {
+  test('Login User with incorrect email and password', async () => {
     await homePage.isVisible();
     await navigation.signUpLogin();
     await loginPage.verifyLoginFormIsVisible();
@@ -61,13 +65,9 @@ test.describe('Registration - Login flow', () => {
     await loginPage.verifyInvalidLoginError();
   });
 
-  test('Logout User', async ({ page }) => {
-    const email = process.env.LOGIN_EMAIL;
-    const password = process.env.LOGIN_PASSWORD;
-    await homePage.isVisible();
-    await navigation.signUpLogin();
-    await loginPage.verifyLoginFormIsVisible();
-    await loginPage.login(email, password);
+  test('Logout User', async ({ authPage }) => {
+    const pages = createPageObjects(authPage);
+    const { navigation, loginPage } = pages;
     await loginPage.logout();
     await navigation.isOnLoginPage();
   });
@@ -75,23 +75,24 @@ test.describe('Registration - Login flow', () => {
 
 test.describe('Cart Testing', () => {
   test.beforeEach(async ({ authPage }) => {
-    navigation = new Navigation(authPage);
-    homePage = new HomePage(authPage);
-    productsPage = new ProductsPage(authPage);
-    cartPage = new CartPage(authPage);
+    const pages = createPageObjects(authPage);
+    Object.assign(globalThis, pages);
   });
 
-  test('Add product to cart', async ({ authPage }) => {
+  test('Add product to cart', async () => {
     await homePage.isVisible();
     await navigation.openProductsPage();
     await productsPage.isVisible();
     await productsPage.waitForProductsToLoad();
+
     await productsPage.hoverOverProduct(0);
     await productsPage.clickAddToCartForHoveredProduct(0);
     await productsPage.continueShopping();
+
     await productsPage.hoverOverProduct(1);
     await productsPage.clickAddToCartForHoveredProduct(1);
     await navigation.viewCart();
+
     await cartPage.verifyProductInCart(1, {
       description: 'Blue Top',
       price: 'Rs. 500',
@@ -107,16 +108,18 @@ test.describe('Cart Testing', () => {
     await cartPage.clearCart();
   });
 
-  test('Verify Product quantity in Cart', async ({ authPage }) => {
+  test('Verify Product quantity in Cart', async () => {
     await homePage.isVisible();
     await navigation.openProductsPage();
     await productsPage.isVisible();
     await productsPage.waitForProductsToLoad();
+
     await productsPage.hoverOverProduct(0);
     await productsPage.clickAddToCartForHoveredProduct(0);
     await productsPage.continueShopping();
     await productsPage.hoverOverProduct(0);
     await productsPage.clickAddToCartForHoveredProduct(0);
+
     await navigation.viewCart();
     await cartPage.verifyProductInCart(1, {
       description: 'Blue Top',
@@ -130,26 +133,26 @@ test.describe('Cart Testing', () => {
 
 test.describe('Place Order', () => {
   test.beforeEach(async ({ authPage }) => {
-    navigation = new Navigation(authPage);
-    homePage = new HomePage(authPage);
-    productsPage = new ProductsPage(authPage);
-    cartPage = new CartPage(authPage);
-    payment = new Payment(authPage);
+    const pages = createPageObjects(authPage);
+    Object.assign(globalThis, pages);
   });
 
-  test('Pay and Confirm order', async ({ authPage }) => {
+  test('Pay and Confirm order', async () => {
     const card_name = process.env.CARD_NAME;
     const card_number = process.env.CARD_NUMBER;
     const card_cvc = process.env.CARD_CVC;
     const card_expiry_month = process.env.CARD_EXPIRY_MONTH;
     const card_expiry_year = process.env.CARD_EXPIRY_YEAR;
+
     await homePage.isVisible();
     await navigation.openProductsPage();
     await productsPage.isVisible();
     await productsPage.waitForProductsToLoad();
+
     await productsPage.hoverOverProduct(0);
     await productsPage.clickAddToCartForHoveredProduct(0);
     await navigation.viewCart();
+
     await cartPage.proceedToCheckout();
     await cartPage.verifyDeliveryAddress({
       fullName: 'Mr. Rob Alcaraz',
@@ -165,6 +168,7 @@ test.describe('Place Order', () => {
       country: 'Canada',
       phone: '09000000000',
     });
+
     await cartPage.placeOrder();
     await payment.fillPaymentForm({
       nameOnCard: card_name,
@@ -180,11 +184,11 @@ test.describe('Place Order', () => {
 
 test.describe('Product Testing', () => {
   test.beforeEach(async ({ authPage }) => {
-    navigation = new Navigation(authPage);
-    productsPage = new ProductsPage(authPage);
+    const pages = createPageObjects(authPage);
+    Object.assign(globalThis, pages);
   });
 
-  test('Review Product', async ({ authPage }) => {
+  test('Review Product', async () => {
     await navigation.openProductsPage();
     await productsPage.clickViewProductByName('Blue Top');
     await productsPage.writeReview(
