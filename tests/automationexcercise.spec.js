@@ -177,3 +177,20 @@ test.describe('Place Order', () => {
     await payment.verifyOrderPlaced();
   });
 });
+
+test.describe('Product Testing', () => {
+  test.beforeEach(async ({ authPage }) => {
+    navigation = new Navigation(authPage);
+    productsPage = new ProductsPage(authPage);
+  });
+
+  test('Review Product', async ({ authPage }) => {
+    await navigation.openProductsPage();
+    await productsPage.clickViewProductByName('Blue Top');
+    await productsPage.writeReview(
+      'John Doe',
+      'johndoe@example.com',
+      'Great product! Fits perfectly and good quality material. Highly recommended!'
+    );
+  });
+});

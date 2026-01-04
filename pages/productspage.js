@@ -33,6 +33,29 @@ class ProductsPage {
     await continueButton.click();
     await continueButton.waitFor({ state: 'hidden', timeout: 5000 });
   }
+
+  async clickViewProductByName(productName) {
+    const link = this.page
+      .locator('.features_items .col-sm-4')
+      .filter({ hasText: productName })
+      .locator('.choose ul li a:has-text("View Product")');
+
+    await link.click();
+  }
+
+  async writeReview(name, email, reviewText) {
+    await this.page.fill('#name', name);
+    await this.page.fill('#email', email);
+    await this.page.fill('#review', reviewText);
+
+    await this.page.click('#button-review');
+
+    const successMessage = this.page.locator(
+      '.alert-success.alert span:has-text("Thank you for your review.")'
+    );
+
+    await successMessage.waitFor({ state: 'visible', timeout: 10000 });
+  }
 }
 
 export { ProductsPage };
