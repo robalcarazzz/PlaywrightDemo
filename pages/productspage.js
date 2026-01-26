@@ -56,6 +56,48 @@ class ProductsPage {
 
     await successMessage.waitFor({ state: 'visible', timeout: 10000 });
   }
+
+  async searchProduct(query, options = {}) {
+    const timeout = options.timeout || 15000;
+
+    if (!query || query.trim() === '') {
+      throw new Error('Search query cannot be empty');
+    }
+
+    const searchInput = this.page.locator('#search_product');
+    const searchButton = this.page.locator('#submit_search');
+
+    await expect(searchInput).toBeVisible({ timeout });
+    await expect(searchButton).toBeEnabled({ timeout });
+
+    await searchInput.fill(query);
+    await searchButton.click();
+
+    console.log(`Searched for: "${query}"`);
+  }
+
+  async verifySearchResultsVisible(options = {}) {
+    const { timeout = 15000, minResults = 1 } = options;
+
+    // Verify the results header is visible
+    await expect(
+      this.page.locator('h2.title.text-center:has-text("Searched Products")')
+    ).toBeVisible({
+      timeout,
+    });
+
+    // Get product cards
+    const productCards = this.page.locator('.features_items .col-sm-4 .product-image-wrapper');
+
+    // Ensure at least one card is visible
+    await expect(productCards.first()).toBeVisible({ timeout });
+
+    // Check count
+    const count = await productCards.count();
+    expect(count).toBeGreaterThanOrEqual(minResults);
+
+    console.log(`✅ Search results loaded: ${count} product(s) found`);
+  }
 }
 
 export { ProductsPage };

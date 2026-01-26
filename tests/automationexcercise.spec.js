@@ -197,4 +197,10 @@ test.describe('Product Testing', () => {
       'Great product! Fits perfectly and good quality material. Highly recommended!'
     );
   });
+
+  test('Search Product', async () => {
+    await navigation.openProductsPage();
+    await productsPage.searchProduct('Tshirt');
+    await productsPage.verifySearchResultsVisible({ minResults: 2 });
+  });
 });
